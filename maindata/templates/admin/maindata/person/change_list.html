@@ -1,0 +1,131 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block result_list %}
+<style>
+  /* Define a CSS style to hide the unwanted parts during printing */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    table,
+    table * {
+      visibility: visible;
+    }
+    .hidden-column {
+    display: block;
+    }
+    .action-select {
+      visibility: hidden;
+    }
+    #action-toggle {
+      visibility: hidden;
+    }
+    .hide-column-button {
+      visibility: hidden;
+    }
+    table {
+      position: absolute;
+      left: 0;
+      top: 20px;
+    }
+  }
+
+
+  table thead th .text a ,table thead th .text {
+    display: block;
+    cursor: pointer;
+    padding: 8px 10px;
+    color: #a47231 !important;
+  }
+  .hidden-column {
+    display: none;
+  }
+
+  .hide-column-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+  }
+</style>
+
+<div class="pdfbutton">
+  <button onclick="printPage()" class="button">PDF</button>
+</div>
+
+<script>
+  function printPage() {
+    document.title = "منظومة الافراد ";
+    window.print();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const table = document.querySelector('#result_list');
+    const headers = table.querySelectorAll('thead th');
+
+    headers.forEach((header, index) => {
+      // Create a button for each column header
+      const button = document.createElement('button');
+      button.classList.add('hide-column-button');
+      button.innerText = 'اخفاء';
+      button.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent default form submission
+        hideColumn(index);
+      });
+
+      // Wrap the header text in a span for easier hiding
+      const headerText = header.innerHTML;
+      header.innerHTML = '';
+      const headerSpan = document.createElement('span');
+      headerSpan.innerHTML = headerText;
+      header.appendChild(headerSpan);
+
+      // Insert the button before the column header
+      header.insertBefore(button, header.firstChild);
+    });
+
+    // Show or hide the hidden columns on page load
+    const hiddenColumns = getHiddenColumns();
+    hiddenColumns.forEach((columnIndex) => {
+      hideColumn(columnIndex);
+    });
+  });
+
+  function hideColumn(columnIndex) {
+    const table = document.querySelector('#result_list');
+    const rows = table.querySelectorAll('tbody tr');
+
+    rows.forEach((row) => {
+      const cells = row.cells;
+      if (cells.length > columnIndex) {
+        cells[columnIndex].classList.toggle('hidden-column');
+      }
+    });
+
+    const headers = table.querySelectorAll('thead th');
+    if (headers.length > columnIndex) {
+      headers[columnIndex].classList.toggle('hidden-column');
+    }
+
+    // Store the hidden column indices in the localStorage
+    const hiddenColumns = getHiddenColumns();
+    if (hiddenColumns.includes(columnIndex)) {
+      // Remove the column index if already hidden
+      const index = hiddenColumns.indexOf(columnIndex);
+      hiddenColumns.splice(index, 1);
+    } else {
+      // Add the column index if not hidden
+      hiddenColumns.push(columnIndex);
+    }
+    localStorage.setItem('hiddenColumns', JSON.stringify(hiddenColumns));
+  }
+
+  function getHiddenColumns() {
+    const hiddenColumns = localStorage.getItem('hiddenColumns');
+    return hiddenColumns ? JSON.parse(hiddenColumns) : [];
+  }
+
+</script>
+{{ block.super }}
+{% endblock %}
