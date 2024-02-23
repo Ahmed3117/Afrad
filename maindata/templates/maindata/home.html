@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+      body{
+        overflow-x: hidden;
+      }
+        /* Custom CSS styles */
+        .bg-color {
+            background-color: #0d8699 !important;
+            color: white;
+        }
+        .main-color {
+            
+            color: #2f5156;
+        }
+        .body-color {
+            
+            background-color: #def0f3 !important;
+        }
+        .branch-color {
+            color: rgb(86, 144, 182) !important;
+        }
+
+        .eng_data , #manager_name{
+          opacity: 0;
+          animation-name: animation;
+          animation-duration: 3s;
+          animation-iteration-count: infinite;
+          
+        }
+        .eng_data{
+          animation-name: animation2;
+        }
+        @keyframes animation {
+          0% {
+            opacity: 0;
+            transform: translateX(-100px);
+            
+          }
+          30% {
+            opacity: .7;
+            
+          }
+          60% {
+            opacity: .5;
+            
+          }
+
+          100% {
+            opacity: 1;
+            transform: translateX(0px);
+
+          }
+        }
+
+        @keyframes animation2 {
+          0% {
+            opacity: 0;
+            transform: translateX(100px);
+            
+          }
+          30% {
+            opacity: .7;
+            
+          }
+          60% {
+            opacity: .5;
+            
+          }
+
+          100% {
+            opacity: 1;
+            transform: translateX(0px);
+
+          }
+        }
+      </style>
+  <body class="body-color">
+
+  <!-- Main Content -->
+  <div class="container mt-1">
+    <div class="row">
+      <div class="col-md-6 offset-md-3 text-center ">
+        <img src="{% static 'imgs/1.png' %}" alt="Image" class=" mb-3" height="300">
+        <h2 class="main-color"> {{home_data.manager_title}} </h2>
+        <h2 class="main-color">{{home_data.manager_caption1}}</h2>
+        <p class="main-color">{{home_data.manager_caption2}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+
+  <footer class="bg-color text-light py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 container text-center">
+            
+                <img src="{% static 'imgs/2.png' %}" alt="Logo" height="50" class="mb-3">
+                <h5 id="manager_name" style="color: #7e1111;font-size: large;">ادارة واشراف :  {{home_data.manager_name}} </h5>
+                <h5 class='eng_data' style="color: #efbf2f;font-size: large;">تنفيذ  : مهندس احمد عيسى</h5>
+                <h5 class='eng_data' style="color: #efbf2f;font-size: large;"> 01095163117 </h5>
+
+              
+        </div>
+        <div class="col-md-6 container text-center">
+          <h5>معلومات الاتصال</h5>
+          <ul class="list-unstyled">
+            <li><strong>الهاتف:</strong> {{home_data.manager_phone}}</li>
+            <li><strong>البريد الإلكتروني:</strong>{{home_data.manager_mail}}</li>
+            <li><strong>العنوان:</strong> {{home_data.manager_address}}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p class="text-center">جميع الحقوق محفوظة &copy; 2023</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+
+
+  {% endblock content %}

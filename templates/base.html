@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>زكاة</title>
+    <!-- <link rel="icon" type="image/x-icon" href="{% static 'imgs/logo.ico' %}"> -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.rtl.min.css' %}" />
+
+    <!-- <link rel="stylesheet" href="{% static 'css/main.css' %}" /> -->
+    <style>
+      /* Custom CSS styles */
+      .bg-color {
+          background-color: #0d8699 !important;
+          color: white;
+      }
+      .main-color {
+          
+          color: #2f5156;
+      }
+      .body-color {
+          
+          background-color: #def0f3 !important;
+      }
+      .branch-color {
+          color: rgb(86, 144, 182) !important;
+      }
+  
+      /* Add more custom styles as needed */
+    </style>
+    
+  </head>
+  <body >
+     {% include "navbar.html" %} 
+
+{% block content %}
+  
+{% endblock content %}
+
+
+    <!-- js -->
+     <script src="{% static 'js/bootstraprtl.bundle.min.js' %}"></script> 
+
+     
+    
+
+    
+  </body>
+</html>

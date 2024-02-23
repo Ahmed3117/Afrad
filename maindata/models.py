@@ -23,26 +23,10 @@ levelchoices=[
     ('lwaa','لواء'),
 ]
 
-branchchoices=[
-    ('secrtary','السكرتارية'),
-    ('nozom','نظم'),
-    ('intag','انتاج'),
-    ('tasleeh','تسليح'),
-    ('tafteesh',' تفتيش'),
-    ('amn','امن'),
-    ('maly',' مالى'),
-    ('tanzimafrad','تنظيم وافراد'),
-    ('shdobat',' شئون ضباط'),
-    ('takhtit','تخطيط'),
-    ('hamla','حملة'),
-    ('ishara','اشارة'),
-    ('kadaa','قضاء'),
-    ('motabaa','متابعة'),
-    ('tadreeb','تدريب'),
-]
 
 hliday_types=[
     ('leave','اجازة معتادة'),
+    ('civil',' مدنية'),
     ('rest','راحة'),
     ('emerg','عارضة'),
     ('crest','بدل راحة'),
@@ -51,11 +35,29 @@ hliday_types=[
     ('training','دورة'),
 ]
 
+class Level(models.Model):
+    level = models.CharField(verbose_name = " درجة او رتبة ",max_length=100)
+    class Meta:
+        verbose_name = "درجة او رتبة"
+        verbose_name_plural = "الدرجة او الرتبة"
+    def __str__(self):
+        return self.level
 
-# verbose_name='عنوان الامتحان'
-# class Meta:
-#         verbose_name_plural = 'الامتحانات'
-#         ordering = ['created_at']
+class HolidayType(models.Model):
+    holidaytype = models.CharField(verbose_name = "  نوع اجازة",max_length=100)
+    class Meta:
+        verbose_name = " نوع اجازة"
+        verbose_name_plural = "نوع الاجازة"
+    def __str__(self):
+        return self.holidaytype
+
+class Branch(models.Model):
+    name = models.CharField(verbose_name = "فرع او مكتب",max_length=50)
+    class Meta:
+        verbose_name = "فرع او مكتب"
+        verbose_name_plural = "الفروع"
+    def __str__(self):
+        return self.name
 
 class Unit(models.Model):
     mainunit = models.CharField(max_length=200 ,verbose_name='الوحدة الاساسية') # الوحدة الاساسية
@@ -69,11 +71,11 @@ class Person(models.Model):
     name = models.CharField(verbose_name = " الاسم",max_length=200,null=True,blank=True)
     national_id = models.CharField(verbose_name = " الرقم القومى",max_length=14 ,null=True,blank=True)
     military_number = models.CharField(verbose_name = " الرقم العسكرى",max_length=13 ,null=True,blank=True)
-    level = models.CharField(verbose_name = " الرتبة او الدرجة",choices=levelchoices ,max_length=50,default='soldier') # الرتبة
+    level = models.ForeignKey(Level, on_delete=models.CASCADE, null=True,blank=True,verbose_name = " الرتبة او الدرجة") 
     date_added = models.DateField(verbose_name = " تاريخ الانضمام",default=timezone.now(),null=True,blank=True)
     date_out = models.DateField(verbose_name = " تاريخ التسريح",null=True,blank=True)
-    mainunit = models.ForeignKey(Unit, on_delete=models.CASCADE, null=True,blank=True,verbose_name = "   الوحدة الاساسية") 
-    branch = models.CharField(verbose_name = "  الفرع",choices=branchchoices ,max_length=100,default='secrtary') 
+    mainunit = models.ForeignKey(Unit, on_delete=models.CASCADE, null=True,blank=True,verbose_name = " الوحدة الاساسية") 
+    branch = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True,blank=True,verbose_name = " الفرع")
     # redif_detection = models.CharField(max_length=5,null=True,blank=True) 
     class Meta:
         verbose_name_plural = ' الافراد'
@@ -81,7 +83,7 @@ class Person(models.Model):
 
     def detect_redif_wich_dofaa(self):
         if self.date_out:
-            redif_time = self.date_out - timedelta(days=3 * 30)
+            redif_time = self.date_out 
             # redif_time = self.date_out - relativedelta(months=3)
             months = redif_time.month
             years = redif_time.year
@@ -105,9 +107,14 @@ class Person(models.Model):
 class Holiday(models.Model):
     # person = models.ManyToManyField(Person,verbose_name = "الفرد") 
     person = models.ForeignKey(Person, on_delete=models.CASCADE, null=True,blank=True,verbose_name = "الفرد") 
-    hliday_type = models.CharField(verbose_name = "نوع الاجازة",choices=hliday_types ,default= 'leave' ,max_length=100)
+    holidaytype = models.ForeignKey(HolidayType, on_delete=models.CASCADE, null=True,blank=True,verbose_name = "  نوع الاجازة ") 
     date_from = models.DateField(verbose_name = "تاريخ الذهاب",default=timezone.now(),null=True,blank=True)
     date_to = models.DateField(verbose_name = "تاريخ العوده",default=timezone.now()+timedelta(days=7),null=True,blank=True)
+    def gettimefrom(self):
+        timefrom = 700
+        if self.person.level.level == "جندى":
+            timefrom = 900
+        return timefrom
 
     def __str__(self) :
         return self.person.name
@@ -115,3 +122,4 @@ class Holiday(models.Model):
     class Meta:
         verbose_name_plural = ' الاجازات'
         verbose_name='  اجازة'
+

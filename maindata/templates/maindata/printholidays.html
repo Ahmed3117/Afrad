@@ -1,0 +1,88 @@
+{% load static %}
+{% load arabic_indic %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منظومة الافراد|تصاريح اجازة</title>
+    <!-- <link rel="icon" type="image/x-icon" href="{% static 'imgs/logo.ico' %}"> -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.rtl.min.css' %}" />
+
+    <style>
+      body{
+        overflow-x: hidden;
+       
+      }
+      .tasreeh{
+        border: 1px solid;
+        padding: 5px;
+        margin-top:10px; 
+        
+      }
+      h5{
+          font-size:15px;
+      }
+      h6{
+          font-size:13px;
+      }
+      span{
+          font-size:11px;
+      }
+      .row{
+        --bs-gutter-x: 0rem;
+      }
+      .tasreeh-footer{
+        margin-top: 10%;
+        margin-right: 45%;
+      }
+      h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0.2rem;
+    font-weight: bold;
+    line-height: 1.2;
+}
+      </style>
+<!-- {% for holiday in holidays %}
+{{holiday.person.name}}
+{{holiday.date_from}}
+{{holiday.date_to}}
+سعة :
+{{holiday.gettimefrom}}
+
+{% endfor %} -->
+<div class="">
+    <div class="row">
+        {% for holiday in holidays %}
+    <div class="col-4 d-flex justify-content-center">
+        <div class="tasreeh">
+            <h5 style="text-align:left">دفتر نموذج  ه.أ.ت</h5>
+            <h5 style="text-align:center">تصريح بالغياب</h5>
+            <h5 style="text-align:center" >الجيش /المنطقة المركزية </h5>
+            <h6>الوحدة / هيئة إمداد وتموين القوات المسلحة </h6>
+            <h6>درجة / <span>{{holiday.person.level}}</span> </h6>
+            <h6>اسم / <span>{{holiday.person.name}}</span> </h6>
+            <h6 style="text-align:center" >يصرح للمذكور بالغياب عن الوحدة </h6>
+            <h6>من سعت {{ holiday.gettimefrom|arabic_indic }}: يوم {{ holiday.date_from|arabic_indic }}</h6>
+            <h6>الى سعت {{holiday.gettimefrom|arabic_indic}} :  يوم {{holiday.date_to|arabic_indic}}</h6>
+            <h6>حيث أنه أجازة / مأمورية </h6>
+
+            <div class="tasreeh-footer">
+                <h6 style="text-align:right">التوقيع(.....................)</h6>
+                <h6 style="text-align:right">رتــــبــــة/عقيـــــــــــــــــــــــد</h6>
+                <h6 style="text-align:right">اسم/أيمن زكريا يوسف</h6>
+                <h6 style="text-align:right">قــــــــــــــائـــد الــــــوحــــدة</h6>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+</div>
+
+
+    <!-- js -->
+    <script src="{% static 'js/bootstraprtl.bundle.min.js' %}"></script> 
+</body>
+</html>

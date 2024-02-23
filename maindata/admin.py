@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Unit , Person , Holiday
+from .models import Unit , Person , Holiday,Branch,Level,HolidayType
 from django.utils import timezone
 from datetime import timedelta
 # Register your models here.
@@ -21,18 +21,15 @@ class RedifTimeFilter(admin.SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        # رديف 3 = خارج فى 6
-        # رديف 6 = خارج فى 9
-        # رديف 9 = خارج فى 12
-        # رديف 12 = خارج فى 3 السنة اللى بعدها
+        
         if self.value() == '3-' + str(current_year):
-            return queryset.filter(date_out__month=6, date_out__year=current_year)
+            return queryset.filter(date_out__month=3, date_out__year=current_year)
         elif self.value() == '6-' + str(current_year):
-            return queryset.filter(date_out__month=9, date_out__year=current_year)
+            return queryset.filter(date_out__month=6, date_out__year=current_year)
         elif self.value() == '9-' + str(current_year):
-            return queryset.filter(date_out__month=12, date_out__year=current_year)
+            return queryset.filter(date_out__month=9, date_out__year=current_year)
         elif self.value() == '12-' + str(current_year):
-            return queryset.filter(date_out__month=3, date_out__year=current_year+1)
+            return queryset.filter(date_out__month=12, date_out__year=current_year)
         else:
             return queryset
 
@@ -116,26 +113,62 @@ class UnitAdmin(admin.ModelAdmin):
     list_per_page = 10
     change_list_template = 'admin/maindata/person/change_list.html'
 admin.site.register(Unit, UnitAdmin)
-
+from django.contrib import messages
 from django.contrib.auth.admin import User
 class PersonAdmin(admin.ModelAdmin):
     list_display = ('name','national_id','military_number','level','mainunit','date_added','date_out','branch','detect_redif_wich_dofaa')
-    list_filter = ('level','date_added','date_out','branch','mainunit__mainunit',RedifTimeFilter,MissionORMainUnitFilter,FinishedORNotFilter)
-    search_fields = ('name','national_id','military_number','date_added','date_out','branch')
+    list_filter = ('level__level','date_added','date_out','branch__name','mainunit__mainunit',RedifTimeFilter,MissionORMainUnitFilter,FinishedORNotFilter)
+    search_fields = ('name','national_id','military_number','date_added','date_out')
     ordering = ('name','level','mainunit','date_added','date_out','branch')
     list_per_page = 10
+    list_editable = ()
     change_list_template = 'admin/maindata/person/change_list.html'
-admin.site.register(Person, PersonAdmin)
+    def recordAbsence(self, request, queryset):
+        try:
+            holidaydays = int(request.POST.get('holidaydays'))
+        except:
+            holidaydays = 0
+        if holidaydays == 0 :
+            messages.error(request, 'لم يتم التنفيذ , برجاء اختيار عدد ايام الاجازة') 
+        else:
+            for person in queryset:
+                Holiday.objects.create(person=person,date_from=timezone.now() ,date_to=timezone.now() + timedelta(days=holidaydays))
+                
+    def DisableEditFields(self, request, queryset):
+        self.list_editable = ()
+    def EnableEditFields(self, request, queryset):
+        self.list_editable = ('national_id','military_number','level','mainunit','date_added','date_out','branch')
 
+    recordAbsence.short_description = "تسجيل اجازة"  # Set the display name for the custom action
+    EnableEditFields.short_description = " تعديل"  
+    DisableEditFields.short_description = "الغاء التعديل"  
+    actions = ['recordAbsence','EnableEditFields','DisableEditFields']
+admin.site.register(Person, PersonAdmin) 
+
+
+admin.site.register(Branch)         
+admin.site.register(Level)         
+admin.site.register(HolidayType)         
+    
+    
 
 
 class HolidayAdmin(admin.ModelAdmin):
     # autocomplete_fields = ['person']
     raw_id_fields = ('person',)
-    list_display = ('person', 'hliday_type', 'date_from', 'date_to')
-    list_filter = ('hliday_type', 'date_from', 'date_to',presentORabsentFilter)
+    list_display = ('person', 'holidaytype', 'date_from', 'date_to')
+    list_filter = ('holidaytype__holidaytype', 'date_from', 'date_to',presentORabsentFilter)
     search_fields = ('person__name',)
-    change_list_template = 'admin/maindata/person/change_list.html'
+    change_list_template = 'admin/maindata/holiday/change_list.html'
+    list_per_page = 10
+    list_editable = ()
+    def DisableEditFields(self, request, queryset):
+        self.list_editable = ()
+    def EnableEditFields(self, request, queryset):
+        self.list_editable = ('holidaytype', 'date_from', 'date_to')
+    EnableEditFields.short_description = " تعديل"  
+    DisableEditFields.short_description = "الغاء التعديل"  
+    actions = ['EnableEditFields','DisableEditFields']
 
 admin.site.register(Holiday, HolidayAdmin)
 

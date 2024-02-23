@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-dbpx)!#%s!#n^&&r^e0!t&ot$vit@t8++_=1*)#84ym)j-v@(w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     'maindata',
     # 'autocomplete_light',
 ]
+
+X_FRAME_OPTIONS='SAMEORIGIN'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -98,7 +100,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ar-eg'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Cairo'
+
 
 USE_I18N = True
 
@@ -108,23 +111,28 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_ROOT = BASE_DIR / "static"
-STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",
-#     # '/var/www/static/',
-# ]
-MEDIA_URL = '/media/'
-MEDIA_ROOT=BASE_DIR / "media"
-
-# import os
+# STATIC_ROOT = BASE_DIR / "static"
 # STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",
-# ]
-# MEDIA_URL = "/media/"
+# # STATICFILES_DIRS = [
+# #     BASE_DIR / "static",
+# #     # '/var/www/static/',
+# # ]
+# MEDIA_URL = '/media/'
 # MEDIA_ROOT=BASE_DIR / "media"
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
+
+
+import os
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+USE_L10N = False
+USE_THOUSAND_SEPARATOR = False
